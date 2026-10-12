@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: django-tasks
+    runtime: python
+    buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate"
+    startCommand: "gunicorn config.wsgi:application"
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: PYTHON_VERSION
+        value: "3.13.0"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: django-tasks-db
+          property: connectionString
+
+databases:
+  - name: django-tasks-db
+    plan: free
